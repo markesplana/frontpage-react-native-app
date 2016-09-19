@@ -3,9 +3,15 @@ import Button from 'react-native-button';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 
+const containerStyle = {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'flex-end'
+};
+
 function PostUpvoter({ mutate, postId }) {
   return (
-    <Button onPress={() => mutate({ variables: { postId }})}>
+    <Button containerStyle={containerStyle} onPress={() => mutate({ variables: { postId }})}>
       Upvote
     </Button>
   )
