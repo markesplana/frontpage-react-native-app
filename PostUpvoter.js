@@ -9,6 +9,8 @@ const containerStyle = {
   alignItems: 'flex-end'
 };
 
+// A mutation is made available on a callback called `mutate`
+// Other props of the wrapping component are passed through.
 function PostUpvoter({ mutate, postId }) {
   return (
     <Button containerStyle={containerStyle} onPress={() => mutate({ variables: { postId }})}>
@@ -16,6 +18,8 @@ function PostUpvoter({ mutate, postId }) {
     </Button>
   )
 }
+
+// You can also use `graphql` for GraphQL mutations
 export default graphql(gql`
   mutation upvotePost($postId: Int!) {
     upvotePost(postId: $postId) {

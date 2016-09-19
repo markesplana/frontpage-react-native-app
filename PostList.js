@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  Text,
-  View,
-} from 'react-native';
+import { Text, View } from 'react-native';
 import { graphql, ApolloProvider } from 'react-apollo';
 import gql from 'graphql-tag';
 import PostUpvoter from './PostUpvoter'
@@ -15,7 +12,9 @@ const styles = {
   votes: { color: '#999' },
 }
 
-function PostList({ loading, posts }) {
+// The data prop, which is provided by the wrapper below contains,
+// a `loading` key while the query is in flight and posts when it is ready
+function PostList({ data: { loading, posts } }) {
   if (loading) {
     return <Text style={styles.outer}>Loading</Text>;
   } else {
@@ -38,7 +37,9 @@ function PostList({ loading, posts }) {
   }
 }
 
-const allPosts = gql`
+// The `graphql` wrapper executes a GraphQL query and makes the results
+// available on the `data` prop of the wrapped component (PostList here)
+export default graphql(gql`
   query allPosts {
     posts {
       id
@@ -51,11 +52,4 @@ const allPosts = gql`
       }
     }
   }
-`
-
-export default graphql(allPosts, {
-  props: ({data: { loading, posts }}) => ({
-    loading,
-    posts,
-  }),
-})(PostList);
+`)(PostList);
