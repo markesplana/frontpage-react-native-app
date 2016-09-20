@@ -13,7 +13,10 @@ const containerStyle = {
 // Other props of the wrapping component are passed through.
 function PostUpvoter({ mutate, postId }) {
   return (
-    <Button containerStyle={containerStyle} onPress={() => mutate({ variables: { postId }})}>
+    <Button
+      containerStyle={containerStyle}
+      onPress={() => mutate({ variables: { postId }})}
+    >
       Upvote
     </Button>
   )
