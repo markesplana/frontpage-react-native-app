@@ -6,7 +6,7 @@ import { graphql } from 'react-apollo';
 const containerStyle = {
   flex: 1,
   justifyContent: 'center',
-  alignItems: 'flex-end'
+  alignItems: 'flex-end',
 };
 
 // A mutation is made available on a callback called `mutate`
