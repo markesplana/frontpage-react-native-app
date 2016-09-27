@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { graphql, ApolloProvider } from 'react-apollo';
+import { graphql, withApollo, ApolloProvider } from 'react-apollo';
 import gql from 'graphql-tag';
 import PostUpvoter from './PostUpvoter'
 
@@ -14,35 +14,70 @@ const styles = {
 
 // The data prop, which is provided by the wrapper below contains,
 // a `loading` key while the query is in flight and posts when ready
-function PostList({ data: { loading, posts } }) {
-  if (loading) {
-    return <Text style={styles.outer}>Loading</Text>;
-  } else {
-    return (
-      <View style={styles.outer}>
-        {posts.sort((x, y) => y.votes - x.votes).map(post => (
-          <View key={post.id} style={styles.wrapper}>
-            <View>
-              <Text style={styles.header}>{post.title}</Text>
-              <View style={styles.subtextWrapper}>
-                <Text>
-                  by {post.author.firstName} {' '}
-                  {post.author.lastName} {' '}
-                </Text>
-                <Text style={styles.votes}>{post.votes} votes</Text>
+
+class PostList extends Component {
+  componentDidMount() {
+    const { client, data: { updateQuery } } = this.props;
+
+    // subscribe to new comments
+    // call the "subscribe" method on Apollo Client
+    client.subscribe({
+      query: gql`
+        subscription onPostUpvoted {
+          postUpvoted {
+            id
+            votes
+          }
+        }
+      `,
+    }).subscribe({
+      next(data) {
+        updateQuery((previousResult) => {
+          const posts = previousResult.posts.map((post) => {
+            if (post.id === data.postUpvoted.id) {
+              return Object.assign({}, post, { votes: data.postUpvoted.votes });
+            } else {
+              return post;
+            }
+          });
+          return { posts };
+        });
+      },
+      error(err) { console.error('err', err); },
+    });
+  }
+
+  render() {
+    const { data: { loading, posts } } = this.props;
+    if (loading) {
+      return <Text style={styles.outer}>Loading</Text>;
+    } else {
+      return (
+        <View style={styles.outer}>
+          {posts.sort((x, y) => y.votes - x.votes).map(post => (
+            <View key={post.id} style={styles.wrapper}>
+              <View>
+                <Text style={styles.header}>{post.title}</Text>
+                <View style={styles.subtextWrapper}>
+                  <Text>
+                    by {post.author.firstName} {' '}
+                    {post.author.lastName} {' '}
+                  </Text>
+                  <Text style={styles.votes}>{post.votes} votes</Text>
+                </View>
               </View>
+              <PostUpvoter postId={post.id} />
             </View>
-            <PostUpvoter postId={post.id} />
-          </View>
-        ))}
-      </View>
-    );
+          ))}
+        </View>
+      );
+    }
   }
 }
 
 // The `graphql` wrapper executes a GraphQL query and makes the results
 // available on the `data` prop of the wrapped component (PostList here)
-export default graphql(gql`
+export default withApollo(graphql(gql`
   query allPosts {
     posts {
       id
@@ -55,4 +90,4 @@ export default graphql(gql`
       }
     }
   }
-`)(PostList);
+`)(PostList));
