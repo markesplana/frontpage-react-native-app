@@ -18,6 +18,8 @@ Make sure you have [React Native installed](https://facebook.github.io/react-nat
 
 This app talks to the hello world server, available here: https://github.com/apollostack/frontpage-server
 
+**NOTE** that this version requires the `subscriptions` branch of that server
+
 Once you've installed and started that server, start this app with:
 
 ```
