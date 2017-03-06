@@ -1,5 +1,7 @@
 # Apollo React Native Hello World app
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/apollographql/frontpage-react-native-app.svg)](https://greenkeeper.io/)
+
 This is the simple example React Native/Apollo app that lives at dev.apollodata.com.
 
 ## Installation
